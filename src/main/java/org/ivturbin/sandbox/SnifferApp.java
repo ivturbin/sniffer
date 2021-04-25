@@ -12,14 +12,15 @@ import java.io.IOException;
 
 
 public class SnifferApp extends Application {
-    private static final Logger logger = LogManager.getLogger(SnifferApp.class.getName());
+    public static final Logger logger = LogManager.getLogger(SnifferApp.class.getName());
 
     @Override
     public void start(Stage primaryStage) throws IOException {
        logger.info("Application started");
         Parent root = FXMLLoader.load(getClass().getResource("/MainWindow.fxml"));
-        primaryStage.setTitle("Работа с БД");
-        primaryStage.setScene(new Scene(root, 360, 220));
+
+        primaryStage.setTitle("Sniffer");
+        primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.setResizable(false);
         primaryStage.show();
     }
