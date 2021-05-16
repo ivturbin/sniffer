@@ -1,22 +1,36 @@
 package org.ivturbin.sandbox;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.text.Text;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import org.jnetpcap.packet.PcapPacket;
+import org.jnetpcap.protocol.network.Ip4;
 
-public class MainWindowController {
+import java.net.InetAddress;
+import java.util.ArrayList;
+
+
+public class MainWindowController implements PacketListener{
     Sniffer sniffer = new Sniffer();
-    @FXML
-    private ResourceBundle resources;
+    PcapLoopThread pcapLoopThread;
+
+    ArrayList<InetAddress> addresses = new ArrayList<>();
 
     @FXML
-    private URL location;
+    private TableView<Packet> tvPackets;
 
     @FXML
-    private Text text;
+    private TableColumn<Packet, Integer> tcSize;
+
+    @FXML
+    private TableColumn<Packet, String> tcSourceIP;
+
+    @FXML
+    private TableColumn<Packet, String> tcDestinationIP;
 
     @FXML
     private Button btnStart;
@@ -25,18 +39,26 @@ public class MainWindowController {
     private Button btnStop;
 
     @FXML
-    void btnStartClicked(ActionEvent event) {
+    private Label lbDevice;
+
+    @FXML
+    void btnStartClicked() {
         SnifferApp.logger.info("Start clicked");
         sniffer.openDevice();
-        sniffer.startCapturing(text);
+        lbDevice.setText("Connected: " + sniffer.getDevices().get(0));
+
+        pcapLoopThread = new PcapLoopThread(sniffer.getPcap());
+        pcapLoopThread.addListener(this);
+        pcapLoopThread.start();
         btnStart.setDisable(true);
         btnStop.setDisable(false);
     }
 
     @FXML
-    void btnStopClicked(ActionEvent event) {
+    void btnStopClicked() {
         SnifferApp.logger.info("Stop clicked");
-        sniffer.stopCapturing();
+        lbDevice.setText("");
+        pcapLoopThread.interrupt();
         btnStart.setDisable(false);
         btnStop.setDisable(true);
     }
@@ -44,6 +66,34 @@ public class MainWindowController {
     @FXML
     void initialize() {
         SnifferApp.logger.info("Main window initialize");
+        tcSize.setCellValueFactory(new PropertyValueFactory<>("size"));
+        tcSourceIP.setCellValueFactory(new PropertyValueFactory<>("sourceIP"));
+        tcDestinationIP.setCellValueFactory(new PropertyValueFactory<>("destinationIP"));
+    }
+
+    @Override
+    public void newPacket(Packet packet, PcapPacket pcapPacket) {
+        Ip4 ip = new Ip4();
+        try {
+        addAddressIfNew(InetAddress.getByAddress(pcapPacket.getHeader(ip).source()));
+        } catch (Exception e) {
+            SnifferApp.logger.info("No address");
+        }
+        if (tvPackets.getItems() == null) {
+            ArrayList <Packet> packets = new ArrayList<>();
+            packets.add(packet);
+            tvPackets.setItems(javafx.collections.FXCollections.observableList(packets));
+
+        } else {
+            tvPackets.getItems().add(packet);
+        }
+    }
+
+    private void addAddressIfNew(InetAddress inetAddress)
+    {
+        if (!addresses.contains(inetAddress)) {
+            addresses.add(inetAddress);
+        }
 
     }
 }

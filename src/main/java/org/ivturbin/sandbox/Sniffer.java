@@ -1,6 +1,5 @@
 package org.ivturbin.sandbox;
 
-import javafx.scene.text.Text;
 import org.jnetpcap.Pcap;
 import org.jnetpcap.PcapIf;
 
@@ -11,7 +10,7 @@ public class Sniffer {
     private static Pcap pcap;
     private final ArrayList<PcapIf> allDevs = new ArrayList<>();
     private final ArrayList<String> devices = new ArrayList<>();
-    PcapLoopThread pcapLoopThread;
+
 
     private void findDevices() {
         StringBuilder errorBuffer = new StringBuilder();
@@ -45,12 +44,7 @@ public class Sniffer {
         return devices;
     }
 
-    public void startCapturing(Text text) {
-        pcapLoopThread = new PcapLoopThread(pcap, text);
-        pcapLoopThread.start();
-    }
-
-    public void stopCapturing() {
-        pcapLoopThread.interrupt();
+    public Pcap getPcap() {
+        return pcap;
     }
 }

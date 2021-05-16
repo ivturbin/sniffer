@@ -1,20 +1,20 @@
 package org.ivturbin.sandbox;
 
-
-import javafx.scene.text.Text;
 import org.jnetpcap.Pcap;
 import org.jnetpcap.packet.PcapPacket;
 import org.jnetpcap.packet.PcapPacketHandler;
+import org.jnetpcap.packet.format.FormatUtils;
 import org.jnetpcap.protocol.network.Ip4;
 
+import java.util.ArrayList;
 
-public class PcapLoopThread extends Thread {
+
+public class PcapLoopThread extends Thread{
     private Pcap pcap;
-    private Text text;
+    private ArrayList <PacketListener> listeners = new ArrayList<>();
 
-    PcapLoopThread(Pcap pcap, Text text) {
+    PcapLoopThread(Pcap pcap) {
         this.pcap = pcap;
-        this.text = text;
     }
 
     @Override
@@ -42,30 +42,37 @@ public class PcapLoopThread extends Thread {
         @Override
         public void nextPacket(PcapPacket packet, String user) {
 
+
             Ip4 ip = new Ip4();
             if (packet.hasHeader(ip)) {
+                Packet myPacket = new Packet(packet.size(), FormatUtils.ip(packet.getHeader(ip).source()), FormatUtils.ip(packet.getHeader(ip).destination()));
+                for (PacketListener listener:
+                        listeners
+                     ) {
+                    listener.newPacket(myPacket, packet);
+                }
 
                 // данные фрейма data
                 byte[] data = packet.getByteArray(0, packet.size());
 
                 // номер фрейма
-                //nbpct = (int) packet.getFrameNumber();
+                //= (int) packet.getFrameNumber();
                 readData = "";
-                // количество байт фрейма
-                //label2.setText(String.format("Length of packet %d bytes", data.length));
-                //label3.setText(String.format("Frame number %d ", packet.getFrameNumber()));
                 byte[] sIP = packet.getHeader(ip).source();
                 System.out.println("Пакет " + data.length + " байт, номер фрейма " + packet.getFrameNumber() + " IP источника: " + org.jnetpcap.packet.format.FormatUtils.ip(sIP));
+
                 //System.out.println("Номер фрейма " + packet.getFrameNumber());
                 // перенос данных фрейма в форматированную строку
                 for (int i = 0; i < data.length; i++) {
                     bufrd[i] = data[i];
                     readData = readData + String.format("%02X ", bufrd[i]);
                 }
-                // данные фрейма в окно input
                 System.out.println(readData);
-                //input.setText(readData);
             }
         }
     };
+
+    public void addListener(PacketListener listener) {
+        listeners.add(listener);
+    }
 }

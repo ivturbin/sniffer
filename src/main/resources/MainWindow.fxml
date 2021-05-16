@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="500.0" prefWidth="501.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ivturbin.sandbox.MainWindowController">
    <children>
-      <Button fx:id="btnStart" defaultButton="true" layoutX="7.0" layoutY="11.0" mnemonicParsing="false" onAction="#btnStartClicked" text="Start" />
-      <Button fx:id="btnStop" disable="true" layoutX="60.0" layoutY="11.0" mnemonicParsing="false" onAction="#btnStopClicked" text="Stop" />
-      <Text fx:id="text" layoutX="14.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="358.13671875" />
+      <Button fx:id="btnStart" defaultButton="true" layoutX="367.0" layoutY="462.0" mnemonicParsing="false" onAction="#btnStartClicked" text="Start" />
+      <Button fx:id="btnStop" disable="true" layoutX="433.0" layoutY="462.0" mnemonicParsing="false" onAction="#btnStopClicked" text="Stop" />
+      <TableView fx:id="tvPackets" layoutX="11.0" layoutY="45.0" prefHeight="411.0" prefWidth="480.0">
+        <columns>
+          <TableColumn fx:id="tcSize" prefWidth="103.0" text="Размер" />
+            <TableColumn fx:id="tcSourceIP" prefWidth="161.0" text="IP источника" />
+            <TableColumn fx:id="tcDestinationIP" prefWidth="143.0" text="IP получателя" />
+        </columns>
+      </TableView>
+      <Label fx:id="lbDevice" layoutX="11.0" layoutY="14.0" />
    </children>
 </AnchorPane>
