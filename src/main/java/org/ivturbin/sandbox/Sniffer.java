@@ -1,5 +1,7 @@
 package org.ivturbin.sandbox;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jnetpcap.Pcap;
 import org.jnetpcap.PcapIf;
 
@@ -10,13 +12,14 @@ public class Sniffer {
     private static Pcap pcap;
     private final ArrayList<PcapIf> allDevs = new ArrayList<>();
     private final ArrayList<String> devices = new ArrayList<>();
+    final Logger logger = LogManager.getLogger(Sniffer.class.getName());
 
 
     private void findDevices() {
         StringBuilder errorBuffer = new StringBuilder();
         int r = Pcap.findAllDevs(allDevs, errorBuffer);
         if (r != Pcap.OK) {
-            SnifferApp.logger.info("Ошибка чтения сетевых устройств:\n" + errorBuffer.toString());
+            logger.error("Finding devices error:\n" + errorBuffer);
         }
 
         for (PcapIf device:
@@ -35,8 +38,8 @@ public class Sniffer {
         // открыть выбранный адаптер
         pcap = Pcap.openLive(device.getName(), 64 * 1024, Pcap.MODE_PROMISCUOUS, 100, errorBuffer);
         if (pcap == null) {
-            SnifferApp.logger.info("Ошибка открытия сетевого устройства для захвата пакетов:\n"
-                    + errorBuffer.toString());
+            logger.error("Opening device error:\n"
+                    + errorBuffer);
         }
     }
 

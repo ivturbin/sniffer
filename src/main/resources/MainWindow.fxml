@@ -4,19 +4,26 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="500.0" prefWidth="501.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ivturbin.sandbox.MainWindowController">
+<AnchorPane prefHeight="540.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ivturbin.sandbox.MainWindowController">
    <children>
-      <Button fx:id="btnStart" defaultButton="true" layoutX="367.0" layoutY="462.0" mnemonicParsing="false" onAction="#btnStartClicked" text="Start" />
-      <Button fx:id="btnStop" disable="true" layoutX="433.0" layoutY="462.0" mnemonicParsing="false" onAction="#btnStopClicked" text="Stop" />
-      <TableView fx:id="tvPackets" layoutX="11.0" layoutY="45.0" prefHeight="411.0" prefWidth="480.0">
+      <Button fx:id="btnStart" defaultButton="true" layoutX="302.0" layoutY="496.0" mnemonicParsing="false" onAction="#btnStartClicked" text="Start" />
+      <Button fx:id="btnStop" disable="true" layoutX="370.0" layoutY="496.0" mnemonicParsing="false" onAction="#btnStopClicked" text="Stop" />
+      <TableView fx:id="tvPackets" layoutX="14.0" layoutY="43.0" prefHeight="431.0" prefWidth="426.0">
         <columns>
-          <TableColumn fx:id="tcSize" prefWidth="103.0" text="Размер" />
-            <TableColumn fx:id="tcSourceIP" prefWidth="161.0" text="IP источника" />
-            <TableColumn fx:id="tcDestinationIP" prefWidth="143.0" text="IP получателя" />
+          <TableColumn fx:id="tcSize" prefWidth="103.0" text="Size" />
+            <TableColumn fx:id="tcSourceIP" prefWidth="161.0" text="source IP" />
+            <TableColumn fx:id="tcDestinationIP" prefWidth="161.0" text="destination IP" />
         </columns>
       </TableView>
       <Label fx:id="lbDevice" layoutX="11.0" layoutY="14.0" />
+      <Label layoutX="515.0" layoutY="14.0" text="Incoming:" />
+      <TextArea fx:id="input" layoutX="456.0" layoutY="43.0" prefHeight="220.0" prefWidth="310.0" />
+      <Label layoutX="849.0" layoutY="14.0" text="Outgoing:" />
+      <TextArea fx:id="output" layoutX="777.0" layoutY="43.0" prefHeight="220.0" prefWidth="310.0" />
+      <TextArea fx:id="unidIn" layoutX="456.0" layoutY="295.0" prefHeight="179.0" prefWidth="310.0" />
+      <TextArea fx:id="unidOut" layoutX="777.0" layoutY="295.0" prefHeight="179.0" prefWidth="310.0" />
    </children>
 </AnchorPane>

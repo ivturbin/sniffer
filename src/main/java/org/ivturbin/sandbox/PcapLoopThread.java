@@ -1,17 +1,19 @@
 package org.ivturbin.sandbox;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jnetpcap.Pcap;
 import org.jnetpcap.packet.PcapPacket;
 import org.jnetpcap.packet.PcapPacketHandler;
-import org.jnetpcap.packet.format.FormatUtils;
 import org.jnetpcap.protocol.network.Ip4;
 
 import java.util.ArrayList;
 
 
 public class PcapLoopThread extends Thread{
-    private Pcap pcap;
+    private final Pcap pcap;
     private ArrayList <PacketListener> listeners = new ArrayList<>();
+    final Logger logger = LogManager.getLogger(PcapLoopThread.class.getName());
 
     PcapLoopThread(Pcap pcap) {
         this.pcap = pcap;
@@ -19,55 +21,52 @@ public class PcapLoopThread extends Thread{
 
     @Override
     public void run() {
+        logger.info("Capture started");
         while(!isInterrupted())
         {
             try{
                 //Приостанавливает поток 1мс
                 sleep(1);
                 // отлов одного пакета если был Start
-                pcap.loop(1, jpacketHandler, "jnetpcap rocks!");
+                pcap.loop(1, pcapPacketHandler, "jnetpcap rocks!");
             }catch(Exception e){
-                System.out.println("Ошибка вывода пакетов");
+                logger.error("Capturing error");
             }
         }
     }
 
-    private PcapPacketHandler<String> jpacketHandler = new PcapPacketHandler<String>() {
+    private final PcapPacketHandler<String> pcapPacketHandler = new PcapPacketHandler<>() {
 
         // строка данных
         String readData;
-        // буфер данных
-        byte[] bufrd = new byte [2000];
 
         @Override
         public void nextPacket(PcapPacket packet, String user) {
 
-
             Ip4 ip = new Ip4();
             if (packet.hasHeader(ip)) {
-                Packet myPacket = new Packet(packet.size(), FormatUtils.ip(packet.getHeader(ip).source()), FormatUtils.ip(packet.getHeader(ip).destination()));
-                for (PacketListener listener:
+                for (PacketListener listener :
                         listeners
-                     ) {
-                    listener.newPacket(myPacket, packet);
+                ) {
+                    listener.newPacket(packet);
                 }
 
                 // данные фрейма data
-                byte[] data = packet.getByteArray(0, packet.size());
+//                byte[] data = packet.getByteArray(0, packet.size());
+//
+//                readData = "";
+//                byte[] sIP = packet.getHeader(ip).source();
+//                System.out.println("Пакет " + data.length + " байт, номер фрейма " + packet.getFrameNumber() + " IP источника: " + org.jnetpcap.packet.format.FormatUtils.ip(sIP));
 
-                // номер фрейма
-                //= (int) packet.getFrameNumber();
-                readData = "";
-                byte[] sIP = packet.getHeader(ip).source();
-                System.out.println("Пакет " + data.length + " байт, номер фрейма " + packet.getFrameNumber() + " IP источника: " + org.jnetpcap.packet.format.FormatUtils.ip(sIP));
-
-                //System.out.println("Номер фрейма " + packet.getFrameNumber());
-                // перенос данных фрейма в форматированную строку
+                /*
+                 * Перенос данных фрейма в форматированную строку
+                String readData = "";
                 for (int i = 0; i < data.length; i++) {
-                    bufrd[i] = data[i];
-                    readData = readData + String.format("%02X ", bufrd[i]);
+                    readData = readData + String.format("%02X ", data[i]);
                 }
                 System.out.println(readData);
+
+                 */
             }
         }
     };

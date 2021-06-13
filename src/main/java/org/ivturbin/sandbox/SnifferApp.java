@@ -12,7 +12,7 @@ import java.io.IOException;
 
 
 public class SnifferApp extends Application {
-    public static final Logger logger = LogManager.getLogger(SnifferApp.class.getName());
+    final Logger logger = LogManager.getLogger(SnifferApp.class.getName());
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -20,7 +20,7 @@ public class SnifferApp extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/MainWindow.fxml"));
 
         primaryStage.setTitle("Sniffer");
-        primaryStage.setScene(new Scene(root, 500, 500));
+        primaryStage.setScene(new Scene(root, 1100, 540));
         primaryStage.setResizable(false);
         primaryStage.show();
     }
